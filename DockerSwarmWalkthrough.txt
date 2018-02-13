@@ -1,0 +1,39 @@
+## Every swarm has to have atleast one manager and the node that initializes the swarm becomes the manager and that listen address flag
+tells the manager which address and port to use for swarm communication.
+## In Swarm mode the docker containers can reach other hosts by their domain name
+## Nodes can reach the containers running on the other nodes
+## Every container can reach other container                  THIS IS POSSIBLE DUE TO 'ROUTING MESH'
+## PREVIOUSLY to make that happen, we need to have etcd or a conatiner with DNS service or a Load Balance with Nginx to interlock
+## Ports : 2377, 4789, and 7946
+## Create machines in a same subnet
+## Install Docker
+curl https://get.docker.com | sh
+## ssh to one of the machine and make it manager
+ssh dockermachinename
+## To copy the inet addr: from eth0 of the machine
+ifconfig
+## Create swarm with Docker Swarm init on the machine at port 2377
+docker swarm init --listen-addr <IP address of the machine>:2377
+## To list all the nodes in the swarm
+docker node ls 
+## Login to other machines to attach them to swarm as a worker
+docker swarm join <IP address of swarm manager>
+## 
+docker service create --name <any name> <image of the container you want> <Command> <name of the manager node>
+docker service create --name ping00 alpine ping docker-swarm-00
+## To list all the services running on the swarm
+docker service ls
+## To know how many instances one service is running
+docker services tasks <name of the service>
+## Docker ps after logging into the node that runs the service and you can see the image and the command you gave above
+docker ps 
+## To see the logs of the node
+docker logs -f <container ID>
+## To remove the tasks running in the node
+docker service rm <task>
+## To create replicas of the service
+docker service update --replicas <number> <service>
+## The tasks are distributed among nodes 
+## To shutdown a node
+sudo shutdown
+## If a node shuts down the manager shifts the traffic to other nodes of the swarm and equate to the number of replicas 
